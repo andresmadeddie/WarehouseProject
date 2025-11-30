@@ -15,25 +15,25 @@ const sampleWarehouses = [
         name: "Main Warehouse",
         location: "New York, NY",
         capacity: 10000,
-        currentStock: 7500
+        currentStock: 235
     },
     {
         name: "West Coast Hub",
         location: "Los Angeles, CA",
         capacity: 8000,
-        currentStock: 5200
+        currentStock: 500
     },
     {
         name: "Distribution Center",
         location: "Chicago, IL",
         capacity: 12000,
-        currentStock: 9800
+        currentStock: 620
     },
     {
         name: "East Coast Depot",
         location: "Boston, MA",
         capacity: 6000,
-        currentStock: 3200
+        currentStock: 430
     }
 ];
 
