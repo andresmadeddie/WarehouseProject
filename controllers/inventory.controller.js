@@ -1,3 +1,4 @@
+const mongoose = require('mongoose');
 const Inventory = require("../models/inventory.model"); // Import Inventory model
 
 // GET ALL inventories
@@ -24,6 +25,11 @@ const getInventory = async (req, res) => {
 // CREATE a new inventory
 const createInventory = async (req, res) => {
     try {
+        // Convert warehouseId string to ObjectId
+        if (req.body.warehouseId && typeof req.body.warehouseId === 'string') {
+            req.body.warehouseId = new mongoose.Types.ObjectId(req.body.warehouseId);
+        }
+        
         const inventory = await Inventory.create(req.body); // Create inventory from request body
         res.status(200).json(inventory); // Send created inventory as JSON
     } catch (error) {
