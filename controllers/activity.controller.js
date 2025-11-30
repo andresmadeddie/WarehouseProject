@@ -3,7 +3,7 @@ const Activity = require("../models/activity.model"); // Import Activity model
 // GET ALL activities
 const getActivities = async (req, res) => {
     try {
-        const activities = await Activity.find({}); // Fetch all activities
+        const activities = await Activity.find({}).lean(); // Fetch all activities
         res.status(200).json(activities); // Send activities as JSON
     } catch (error) {
         res.status(500).json({ message: error.message }); // Handle server error

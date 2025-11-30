@@ -4,7 +4,7 @@ const Transfer = require("../models/transfer.model"); // Import Transfer model
 // GET ALL transfers
 const getTransfers = async (req, res) => {
     try {
-        const transfers = await Transfer.find({}); // Fetch all transfers
+        const transfers = await Transfer.find({}).lean(); // Fetch all transfers
         res.status(200).json(transfers); // Send transfers as JSON
     } catch (error) {
         res.status(500).json({ message: error.message }); // Handle server error

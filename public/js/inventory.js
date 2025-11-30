@@ -15,7 +15,7 @@ async function addItem() {
     // Get form values
     const sku = document.getElementById('itemSku').value.trim();
     const name = document.getElementById('itemName').value.trim();
-    const warehouseId = document.getElementById('itemWarehouse').value;
+    const warehouseId = parseInt(document.getElementById('itemWarehouse').value);
     const location = document.getElementById('itemLocation').value.trim();
     const quantity = parseInt(document.getElementById('itemQuantity').value);
     const description = document.getElementById('itemDescription').value.trim();
@@ -146,7 +146,7 @@ async function saveItemEdit() {
     const oldWarehouseId = item.warehouseId;
     
     // Get new values from form
-    const newWarehouseId = document.getElementById('editItemWarehouse').value;
+    const newWarehouseId = parseInt(document.getElementById('editItemWarehouse').value);
     const newQuantity = parseInt(document.getElementById('editItemQuantity').value);
 
     // Handle warehouse change

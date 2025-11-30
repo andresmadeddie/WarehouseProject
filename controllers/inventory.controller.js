@@ -4,7 +4,7 @@ const Inventory = require("../models/inventory.model"); // Import Inventory mode
 // GET ALL inventories
 const getInventories = async (req, res) => {
     try {
-        const inventories = await Inventory.find({}); // Fetch all inventories
+        const inventories = await Inventory.find({}).lean(); // Fetch all inventories
         res.status(200).json(inventories); // Send inventories as JSON
     } catch (error) {
         res.status(500).json({ message: error.message }); // Handle server error
