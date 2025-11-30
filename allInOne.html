@@ -1,0 +1,1555 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Warehouse Inventory Management</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #2563eb;
+            --primary-dark: #1e40af;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --danger: #ef4444;
+            --dark: #1f2937;
+            --light: #f3f4f6;
+            --border: #e5e7eb;
+            --text: #374151;
+            --shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: var(--light);
+            color: var(--text);
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        header {
+            background: white;
+            padding: 20px;
+            margin-bottom: 30px;
+            box-shadow: var(--shadow);
+            border-radius: 8px;
+        }
+
+        h1 {
+            color: var(--dark);
+            font-size: 28px;
+            margin-bottom: 10px;
+        }
+
+        .nav-tabs {
+            display: flex;
+            gap: 10px;
+            border-bottom: 2px solid var(--border);
+            margin-top: 20px;
+        }
+
+        .nav-tab {
+            padding: 12px 24px;
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 16px;
+            color: var(--text);
+            border-bottom: 3px solid transparent;
+            transition: all 0.3s;
+        }
+
+        .nav-tab:hover {
+            background: var(--light);
+        }
+
+        .nav-tab.active {
+            color: var(--primary);
+            border-bottom-color: var(--primary);
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 24px;
+            border-radius: 8px;
+            box-shadow: var(--shadow);
+        }
+
+        .stat-card h3 {
+            font-size: 14px;
+            color: var(--text);
+            margin-bottom: 8px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .stat-value {
+            font-size: 32px;
+            font-weight: bold;
+            color: var(--dark);
+            margin-bottom: 8px;
+        }
+
+        .stat-label {
+            font-size: 14px;
+            color: #6b7280;
+        }
+
+        .section {
+            background: white;
+            padding: 24px;
+            border-radius: 8px;
+            box-shadow: var(--shadow);
+            margin-bottom: 20px;
+        }
+
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .section-title {
+            font-size: 20px;
+            font-weight: 600;
+            color: var(--dark);
+        }
+
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 500;
+            transition: all 0.3s;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: var(--primary-dark);
+        }
+
+        .btn-success {
+            background: var(--success);
+            color: white;
+        }
+
+        .btn-danger {
+            background: var(--danger);
+            color: white;
+        }
+
+        .btn-secondary {
+            background: #6b7280;
+            color: white;
+        }
+
+        .btn-sm {
+            padding: 6px 12px;
+            font-size: 13px;
+        }
+
+        .search-filter {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .search-box {
+            flex: 1;
+            min-width: 250px;
+            padding: 10px 16px;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            font-size: 14px;
+        }
+
+        .filter-select {
+            padding: 10px 16px;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            font-size: 14px;
+            background: white;
+        }
+
+        .warehouse-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 20px;
+        }
+
+        .warehouse-card {
+            background: white;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 20px;
+            transition: all 0.3s;
+        }
+
+        .warehouse-card:hover {
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            transform: translateY(-2px);
+        }
+
+        .warehouse-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: start;
+            margin-bottom: 16px;
+        }
+
+        .warehouse-name {
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--dark);
+            margin-bottom: 4px;
+        }
+
+        .warehouse-location {
+            font-size: 14px;
+            color: #6b7280;
+        }
+
+        .warehouse-actions {
+            display: flex;
+            gap: 8px;
+        }
+
+        .capacity-bar {
+            width: 100%;
+            height: 8px;
+            background: var(--light);
+            border-radius: 4px;
+            overflow: hidden;
+            margin: 12px 0;
+        }
+
+        .capacity-fill {
+            height: 100%;
+            background: var(--success);
+            transition: all 0.3s;
+        }
+
+        .capacity-fill.warning {
+            background: var(--warning);
+        }
+
+        .capacity-fill.danger {
+            background: var(--danger);
+        }
+
+        .capacity-text {
+            font-size: 13px;
+            color: var(--text);
+            margin-top: 8px;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: 8px;
+            width: 90%;
+            max-width: 600px;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+
+        .modal-header {
+            padding: 20px 24px;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-title {
+            font-size: 20px;
+            font-weight: 600;
+            color: var(--dark);
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            color: var(--text);
+            padding: 0;
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 4px;
+        }
+
+        .modal-close:hover {
+            background: var(--light);
+        }
+
+        .modal-body {
+            padding: 24px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-label {
+            display: block;
+            font-size: 14px;
+            font-weight: 500;
+            color: var(--dark);
+            margin-bottom: 8px;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 10px 12px;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            font-size: 14px;
+            font-family: inherit;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+        }
+
+        textarea.form-input {
+            resize: vertical;
+            min-height: 80px;
+        }
+
+        .modal-footer {
+            padding: 16px 24px;
+            border-top: 1px solid var(--border);
+            display: flex;
+            justify-content: flex-end;
+            gap: 12px;
+        }
+
+        .table-container {
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        thead {
+            background: var(--light);
+        }
+
+        th {
+            padding: 12px;
+            text-align: left;
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--dark);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        td {
+            padding: 12px;
+            border-bottom: 1px solid var(--border);
+            font-size: 14px;
+        }
+
+        tr:hover {
+            background: var(--light);
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: 500;
+        }
+
+        .badge-success {
+            background: #d1fae5;
+            color: #065f46;
+        }
+
+        .badge-warning {
+            background: #fef3c7;
+            color: #92400e;
+        }
+
+        .badge-danger {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+
+        .alert {
+            padding: 16px;
+            border-radius: 6px;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .alert-warning {
+            background: #fef3c7;
+            border: 1px solid #fbbf24;
+            color: #92400e;
+        }
+
+        .alert-danger {
+            background: #fee2e2;
+            border: 1px solid #f87171;
+            color: #991b1b;
+        }
+
+        .alert-success {
+            background: #d1fae5;
+            border: 1px solid #34d399;
+            color: #065f46;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: #6b7280;
+        }
+
+        .empty-state-icon {
+            font-size: 48px;
+            margin-bottom: 16px;
+        }
+
+        .icon-btn {
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 6px;
+            border-radius: 4px;
+            color: var(--text);
+            font-size: 18px;
+            transition: all 0.3s;
+        }
+
+        .icon-btn:hover {
+            background: var(--light);
+        }
+
+        .icon-btn.danger:hover {
+            background: #fee2e2;
+            color: var(--danger);
+        }
+
+        @media (max-width: 768px) {
+            .nav-tabs {
+                overflow-x: auto;
+            }
+
+            .dashboard-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .warehouse-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .search-filter {
+                flex-direction: column;
+            }
+
+            .search-box {
+                min-width: 100%;
+            }
+        }
+
+        .confirmation-modal .modal-content {
+            max-width: 450px;
+        }
+
+        .confirmation-body {
+            padding: 24px;
+            text-align: center;
+        }
+
+        .confirmation-icon {
+            font-size: 48px;
+            margin-bottom: 16px;
+            color: var(--warning);
+        }
+
+        .confirmation-text {
+            font-size: 16px;
+            color: var(--text);
+            margin-bottom: 8px;
+        }
+
+        .confirmation-subtext {
+            font-size: 14px;
+            color: #6b7280;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 8px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🏢 Warehouse Inventory Management</h1>
+            <p>Comprehensive inventory control across all locations</p>
+            
+            <nav class="nav-tabs">
+                <button class="nav-tab active" data-tab="dashboard">Dashboard</button>
+                <button class="nav-tab" data-tab="warehouses">Warehouses</button>
+                <button class="nav-tab" data-tab="inventory">Inventory</button>
+                <button class="nav-tab" data-tab="transfers">Transfers</button>
+            </nav>
+        </header>
+
+        <!-- Dashboard Tab -->
+        <div id="dashboard" class="tab-content active">
+            <div class="dashboard-grid">
+                <div class="stat-card">
+                    <h3>Total Warehouses</h3>
+                    <div class="stat-value" id="totalWarehouses">0</div>
+                    <div class="stat-label">Active locations</div>
+                </div>
+                <div class="stat-card">
+                    <h3>Total Inventory</h3>
+                    <div class="stat-value" id="totalItems">0</div>
+                    <div class="stat-label">Items in stock</div>
+                </div>
+                <div class="stat-card">
+                    <h3>Average Capacity</h3>
+                    <div class="stat-value" id="avgCapacity">0%</div>
+                    <div class="stat-label">Across all warehouses</div>
+                </div>
+                <div class="stat-card">
+                    <h3>Alerts</h3>
+                    <div class="stat-value" id="totalAlerts">0</div>
+                    <div class="stat-label">Requires attention</div>
+                </div>
+            </div>
+
+            <div id="alertsContainer"></div>
+
+            <div class="section">
+                <div class="section-header">
+                    <h2 class="section-title">Recent Activity</h2>
+                </div>
+                <div id="activityLog"></div>
+            </div>
+        </div>
+
+        <!-- Warehouses Tab -->
+        <div id="warehouses" class="tab-content">
+            <div class="section">
+                <div class="section-header">
+                    <h2 class="section-title">Manage Warehouses</h2>
+                    <button class="btn btn-primary" onclick="openAddWarehouseModal()">
+                        ➕ Add Warehouse
+                    </button>
+                </div>
+                
+                <div class="search-filter">
+                    <input type="text" class="search-box" id="warehouseSearch" placeholder="🔍 Search warehouses...">
+                </div>
+
+                <div class="warehouse-grid" id="warehouseGrid"></div>
+            </div>
+        </div>
+
+        <!-- Inventory Tab -->
+        <div id="inventory" class="tab-content">
+            <div class="section">
+                <div class="section-header">
+                    <h2 class="section-title">Manage Inventory</h2>
+                    <button class="btn btn-primary" onclick="openAddItemModal()">
+                        ➕ Add Item
+                    </button>
+                </div>
+                
+                <div class="search-filter">
+                    <input type="text" class="search-box" id="inventorySearch" placeholder="🔍 Search items...">
+                    <select class="filter-select" id="warehouseFilter">
+                        <option value="">All Warehouses</option>
+                    </select>
+                </div>
+
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>SKU</th>
+                                <th>Item Name</th>
+                                <th>Warehouse</th>
+                                <th>Location</th>
+                                <th>Quantity</th>
+                                <th>Description</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="inventoryTable"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Transfers Tab -->
+        <div id="transfers" class="tab-content">
+            <div class="section">
+                <div class="section-header">
+                    <h2 class="section-title">Transfer Inventory</h2>
+                    <button class="btn btn-primary" onclick="openTransferModal()">
+                        🔄 New Transfer
+                    </button>
+                </div>
+                
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Date</th>
+                                <th>Item</th>
+                                <th>From</th>
+                                <th>To</th>
+                                <th>Quantity</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody id="transferHistory"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add Warehouse Modal -->
+    <div id="addWarehouseModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">Add New Warehouse</h3>
+                <button class="modal-close" onclick="closeModal('addWarehouseModal')">×</button>
+            </div>
+            <div class="modal-body">
+                <form id="addWarehouseForm">
+                    <div class="form-group">
+                        <label class="form-label">Warehouse Name *</label>
+                        <input type="text" class="form-input" id="warehouseName" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Location *</label>
+                        <input type="text" class="form-input" id="warehouseLocation" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Maximum Capacity *</label>
+                        <input type="number" class="form-input" id="warehouseCapacity" min="1" required>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closeModal('addWarehouseModal')">Cancel</button>
+                <button class="btn btn-primary" onclick="addWarehouse()">Add Warehouse</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Edit Warehouse Modal -->
+    <div id="editWarehouseModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">Edit Warehouse</h3>
+                <button class="modal-close" onclick="closeModal('editWarehouseModal')">×</button>
+            </div>
+            <div class="modal-body">
+                <form id="editWarehouseForm">
+                    <input type="hidden" id="editWarehouseId">
+                    <div class="form-group">
+                        <label class="form-label">Warehouse Name *</label>
+                        <input type="text" class="form-input" id="editWarehouseName" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Location *</label>
+                        <input type="text" class="form-input" id="editWarehouseLocation" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Maximum Capacity *</label>
+                        <input type="number" class="form-input" id="editWarehouseCapacity" min="1" required>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closeModal('editWarehouseModal')">Cancel</button>
+                <button class="btn btn-primary" onclick="saveWarehouseEdit()">Save Changes</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add Item Modal -->
+    <div id="addItemModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">Add Inventory Item</h3>
+                <button class="modal-close" onclick="closeModal('addItemModal')">×</button>
+            </div>
+            <div class="modal-body">
+                <form id="addItemForm">
+                    <div class="form-group">
+                        <label class="form-label">SKU *</label>
+                        <input type="text" class="form-input" id="itemSku" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Item Name *</label>
+                        <input type="text" class="form-input" id="itemName" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Warehouse *</label>
+                        <select class="form-input" id="itemWarehouse" required></select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Storage Location *</label>
+                        <input type="text" class="form-input" id="itemLocation" placeholder="e.g., Aisle 3, Shelf B" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Quantity *</label>
+                        <input type="number" class="form-input" id="itemQuantity" min="1" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Description</label>
+                        <textarea class="form-input" id="itemDescription"></textarea>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closeModal('addItemModal')">Cancel</button>
+                <button class="btn btn-primary" onclick="addItem()">Add Item</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Edit Item Modal -->
+    <div id="editItemModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">Edit Inventory Item</h3>
+                <button class="modal-close" onclick="closeModal('editItemModal')">×</button>
+            </div>
+            <div class="modal-body">
+                <form id="editItemForm">
+                    <input type="hidden" id="editItemId">
+                    <div class="form-group">
+                        <label class="form-label">SKU *</label>
+                        <input type="text" class="form-input" id="editItemSku" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Item Name *</label>
+                        <input type="text" class="form-input" id="editItemName" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Warehouse *</label>
+                        <select class="form-input" id="editItemWarehouse" required></select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Storage Location *</label>
+                        <input type="text" class="form-input" id="editItemLocation" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Quantity *</label>
+                        <input type="number" class="form-input" id="editItemQuantity" min="1" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Description</label>
+                        <textarea class="form-input" id="editItemDescription"></textarea>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closeModal('editItemModal')">Cancel</button>
+                <button class="btn btn-primary" onclick="saveItemEdit()">Save Changes</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Transfer Modal -->
+    <div id="transferModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">Transfer Inventory</h3>
+                <button class="modal-close" onclick="closeModal('transferModal')">×</button>
+            </div>
+            <div class="modal-body">
+                <form id="transferForm">
+                    <div class="form-group">
+                        <label class="form-label">Select Item *</label>
+                        <select class="form-input" id="transferItem" required onchange="updateTransferWarehouses()"></select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">From Warehouse *</label>
+                        <input type="text" class="form-input" id="transferFrom" readonly>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">To Warehouse *</label>
+                        <select class="form-input" id="transferTo" required></select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Quantity *</label>
+                        <input type="number" class="form-input" id="transferQuantity" min="1" required>
+                        <small id="transferMaxQty" style="color: #6b7280; font-size: 12px;"></small>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closeModal('transferModal')">Cancel</button>
+                <button class="btn btn-success" onclick="executeTransfer()">Transfer</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Confirmation Modal -->
+    <div id="confirmModal" class="modal confirmation-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">Confirm Action</h3>
+                <button class="modal-close" onclick="closeModal('confirmModal')">×</button>
+            </div>
+            <div class="confirmation-body">
+                <div class="confirmation-icon">⚠️</div>
+                <div class="confirmation-text" id="confirmText"></div>
+                <div class="confirmation-subtext">This action cannot be undone.</div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closeModal('confirmModal')">Cancel</button>
+                <button class="btn btn-danger" id="confirmActionBtn">Delete</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Data storage
+        let warehouses = [];
+        let inventory = [];
+        let transfers = [];
+        let activityLog = [];
+
+        // Initialize app
+        document.addEventListener('DOMContentLoaded', () => {
+            loadData();
+            setupEventListeners();
+            renderDashboard();
+            renderWarehouses();
+            renderInventory();
+            renderTransfers();
+        });
+
+        // Load data from localStorage
+        function loadData() {
+            const stored = localStorage.getItem('inventoryData');
+            if (stored) {
+                const data = JSON.parse(stored);
+                warehouses = data.warehouses || [];
+                inventory = data.inventory || [];
+                transfers = data.transfers || [];
+                activityLog = data.activityLog || [];
+            } else {
+                // Sample data for demo
+                warehouses = [
+                    { id: 1, name: 'Main Warehouse', location: 'New York, NY', capacity: 10000, currentStock: 7500 },
+                    { id: 2, name: 'West Coast Hub', location: 'Los Angeles, CA', capacity: 8000, currentStock: 5200 },
+                    { id: 3, name: 'Distribution Center', location: 'Chicago, IL', capacity: 12000, currentStock: 9800 }
+                ];
+                
+                inventory = [
+                    { id: 1, sku: 'PROD-001', name: 'Office Chair', warehouseId: 1, location: 'A-12', quantity: 150, description: 'Ergonomic office chair' },
+                    { id: 2, sku: 'PROD-002', name: 'Standing Desk', warehouseId: 1, location: 'B-05', quantity: 85, description: 'Adjustable height desk' },
+                    { id: 3, sku: 'PROD-003', name: 'Monitor Stand', warehouseId: 2, location: 'C-08', quantity: 200, description: 'Dual monitor stand' },
+                    { id: 4, sku: 'PROD-004', name: 'Keyboard', warehouseId: 2, location: 'D-03', quantity: 300, description: 'Wireless mechanical keyboard' },
+                    { id: 5, sku: 'PROD-005', name: 'Mouse', warehouseId: 3, location: 'E-15', quantity: 500, description: 'Wireless optical mouse' }
+                ];
+
+                saveData();
+            }
+        }
+
+        // Save data to localStorage
+        function saveData() {
+            localStorage.setItem('inventoryData', JSON.stringify({
+                warehouses,
+                inventory,
+                transfers,
+                activityLog
+            }));
+        }
+
+        // Add activity to log
+        function addActivity(action, details) {
+            activityLog.unshift({
+                id: Date.now(),
+                timestamp: new Date().toISOString(),
+                action,
+                details
+            });
+            if (activityLog.length > 50) activityLog.pop();
+            saveData();
+        }
+
+        // Setup event listeners
+        function setupEventListeners() {
+            // Tab navigation
+            document.querySelectorAll('.nav-tab').forEach(tab => {
+                tab.addEventListener('click', () => {
+                    document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+                    document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+                    
+                    tab.classList.add('active');
+                    document.getElementById(tab.dataset.tab).classList.add('active');
+                });
+            });
+
+            // Search and filter
+            document.getElementById('warehouseSearch').addEventListener('input', filterWarehouses);
+            document.getElementById('inventorySearch').addEventListener('input', filterInventory);
+            document.getElementById('warehouseFilter').addEventListener('change', filterInventory);
+        }
+
+        // Modal functions
+        function openModal(modalId) {
+            document.getElementById(modalId).classList.add('active');
+        }
+
+        function closeModal(modalId) {
+            document.getElementById(modalId).classList.remove('active');
+            // Reset forms
+            const form = document.querySelector(`#${modalId} form`);
+            if (form) form.reset();
+        }
+
+        // Dashboard rendering
+        function renderDashboard() {
+            const totalWarehouses = warehouses.length;
+            const totalItems = inventory.reduce((sum, item) => sum + item.quantity, 0);
+            const avgCapacity = warehouses.length > 0 
+                ? (warehouses.reduce((sum, w) => sum + (w.currentStock / w.capacity * 100), 0) / warehouses.length).toFixed(1)
+                : 0;
+
+            const alerts = getAlerts();
+
+            document.getElementById('totalWarehouses').textContent = totalWarehouses;
+            document.getElementById('totalItems').textContent = totalItems.toLocaleString();
+            document.getElementById('avgCapacity').textContent = avgCapacity + '%';
+            document.getElementById('totalAlerts').textContent = alerts.length;
+
+            // Render alerts
+            const alertsContainer = document.getElementById('alertsContainer');
+            if (alerts.length > 0) {
+                alertsContainer.innerHTML = alerts.map(alert => `
+                    <div class="alert alert-${alert.type}">
+                        <span>${alert.icon}</span>
+                        <div>
+                            <strong>${alert.title}</strong>
+                            <div>${alert.message}</div>
+                        </div>
+                    </div>
+                `).join('');
+            } else {
+                alertsContainer.innerHTML = '';
+            }
+
+            // Render activity log
+            const activityLogEl = document.getElementById('activityLog');
+            if (activityLog.length > 0) {
+                activityLogEl.innerHTML = `
+                    <div class="table-container">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Time</th>
+                                    <th>Action</th>
+                                    <th>Details</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                ${activityLog.slice(0, 10).map(log => `
+                                    <tr>
+                                        <td>${new Date(log.timestamp).toLocaleString()}</td>
+                                        <td>${log.action}</td>
+                                        <td>${log.details}</td>
+                                    </tr>
+                                `).join('')}
+                            </tbody>
+                        </table>
+                    </div>
+                `;
+            } else {
+                activityLogEl.innerHTML = '<div class="empty-state"><div class="empty-state-icon">📋</div><p>No activity yet</p></div>';
+            }
+        }
+
+        // Get alerts for capacity issues
+        function getAlerts() {
+            const alerts = [];
+            warehouses.forEach(warehouse => {
+                const usage = (warehouse.currentStock / warehouse.capacity) * 100;
+                if (usage >= 90) {
+                    alerts.push({
+                        type: 'danger',
+                        icon: '🚨',
+                        title: 'Critical Capacity',
+                        message: `${warehouse.name} is at ${usage.toFixed(1)}% capacity`
+                    });
+                } else if (usage >= 75) {
+                    alerts.push({
+                        type: 'warning',
+                        icon: '⚠️',
+                        title: 'High Capacity',
+                        message: `${warehouse.name} is at ${usage.toFixed(1)}% capacity`
+                    });
+                }
+            });
+            return alerts;
+        }
+
+        // Warehouse functions
+        function openAddWarehouseModal() {
+            openModal('addWarehouseModal');
+        }
+
+        function addWarehouse() {
+            const name = document.getElementById('warehouseName').value.trim();
+            const location = document.getElementById('warehouseLocation').value.trim();
+            const capacity = parseInt(document.getElementById('warehouseCapacity').value);
+
+            if (!name || !location || !capacity) {
+                alert('Please fill all required fields');
+                return;
+            }
+
+            const newWarehouse = {
+                id: Date.now(),
+                name,
+                location,
+                capacity,
+                currentStock: 0
+            };
+
+            warehouses.push(newWarehouse);
+            addActivity('Warehouse Added', `${name} in ${location}`);
+            saveData();
+            renderWarehouses();
+            renderDashboard();
+            closeModal('addWarehouseModal');
+            updateWarehouseSelects();
+        }
+
+        function editWarehouse(id) {
+            const warehouse = warehouses.find(w => w.id === id);
+            if (!warehouse) return;
+
+            document.getElementById('editWarehouseId').value = warehouse.id;
+            document.getElementById('editWarehouseName').value = warehouse.name;
+            document.getElementById('editWarehouseLocation').value = warehouse.location;
+            document.getElementById('editWarehouseCapacity').value = warehouse.capacity;
+            openModal('editWarehouseModal');
+        }
+
+        function saveWarehouseEdit() {
+            const id = parseInt(document.getElementById('editWarehouseId').value);
+            const name = document.getElementById('editWarehouseName').value.trim();
+            const location = document.getElementById('editWarehouseLocation').value.trim();
+            const capacity = parseInt(document.getElementById('editWarehouseCapacity').value);
+
+            const warehouse = warehouses.find(w => w.id === id);
+            if (!warehouse) return;
+
+            if (capacity < warehouse.currentStock) {
+                alert(`Cannot reduce capacity below current stock (${warehouse.currentStock})`);
+                return;
+            }
+
+            warehouse.name = name;
+            warehouse.location = location;
+            warehouse.capacity = capacity;
+
+            addActivity('Warehouse Updated', `${name} details modified`);
+            saveData();
+            renderWarehouses();
+            renderDashboard();
+            closeModal('editWarehouseModal');
+            updateWarehouseSelects();
+        }
+
+        function deleteWarehouse(id) {
+            const warehouse = warehouses.find(w => w.id === id);
+            if (!warehouse) return;
+
+            // Check if warehouse has inventory
+            const hasInventory = inventory.some(item => item.warehouseId === id);
+            if (hasInventory) {
+                alert('Cannot delete warehouse with existing inventory. Please transfer or remove all items first.');
+                return;
+            }
+
+            document.getElementById('confirmText').textContent = `Are you sure you want to delete "${warehouse.name}"?`;
+            document.getElementById('confirmActionBtn').onclick = () => {
+                warehouses = warehouses.filter(w => w.id !== id);
+                addActivity('Warehouse Deleted', `${warehouse.name} removed`);
+                saveData();
+                renderWarehouses();
+                renderDashboard();
+                closeModal('confirmModal');
+                updateWarehouseSelects();
+            };
+            openModal('confirmModal');
+        }
+
+        function renderWarehouses() {
+            const grid = document.getElementById('warehouseGrid');
+            
+            if (warehouses.length === 0) {
+                grid.innerHTML = '<div class="empty-state"><div class="empty-state-icon">🏢</div><p>No warehouses yet. Add your first warehouse to get started!</p></div>';
+                return;
+            }
+
+            grid.innerHTML = warehouses.map(warehouse => {
+                const usage = (warehouse.currentStock / warehouse.capacity) * 100;
+                const usageClass = usage >= 90 ? 'danger' : usage >= 75 ? 'warning' : '';
+                const itemCount = inventory.filter(item => item.warehouseId === warehouse.id).length;
+
+                return `
+                    <div class="warehouse-card">
+                        <div class="warehouse-header">
+                            <div>
+                                <div class="warehouse-name">${warehouse.name}</div>
+                                <div class="warehouse-location">📍 ${warehouse.location}</div>
+                            </div>
+                            <div class="action-buttons">
+                                <button class="icon-btn" onclick="editWarehouse(${warehouse.id})" title="Edit">✏️</button>
+                                <button class="icon-btn danger" onclick="deleteWarehouse(${warehouse.id})" title="Delete">🗑️</button>
+                            </div>
+                        </div>
+                        <div class="capacity-bar">
+                            <div class="capacity-fill ${usageClass}" style="width: ${usage}%"></div>
+                        </div>
+                        <div class="capacity-text">
+                            ${warehouse.currentStock.toLocaleString()} / ${warehouse.capacity.toLocaleString()} units (${usage.toFixed(1)}%)
+                        </div>
+                        <div style="margin-top: 12px; font-size: 14px; color: #6b7280;">
+                            📦 ${itemCount} item types
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function filterWarehouses() {
+            const search = document.getElementById('warehouseSearch').value.toLowerCase();
+            const cards = document.querySelectorAll('.warehouse-card');
+            
+            cards.forEach(card => {
+                const text = card.textContent.toLowerCase();
+                card.style.display = text.includes(search) ? 'block' : 'none';
+            });
+        }
+
+        // Inventory functions
+        function openAddItemModal() {
+            if (warehouses.length === 0) {
+                alert('Please add a warehouse first');
+                return;
+            }
+            updateWarehouseSelects();
+            openModal('addItemModal');
+        }
+
+        function addItem() {
+            const sku = document.getElementById('itemSku').value.trim();
+            const name = document.getElementById('itemName').value.trim();
+            const warehouseId = parseInt(document.getElementById('itemWarehouse').value);
+            const location = document.getElementById('itemLocation').value.trim();
+            const quantity = parseInt(document.getElementById('itemQuantity').value);
+            const description = document.getElementById('itemDescription').value.trim();
+
+            if (!sku || !name || !warehouseId || !location || !quantity) {
+                alert('Please fill all required fields');
+                return;
+            }
+
+            // Check for duplicate SKU
+            const existingItem = inventory.find(item => item.sku === sku && item.warehouseId === warehouseId);
+            if (existingItem) {
+                const update = confirm(`Item with SKU "${sku}" already exists in this warehouse. Update quantity instead?`);
+                if (update) {
+                    existingItem.quantity += quantity;
+                    updateWarehouseStock(warehouseId, quantity);
+                    addActivity('Inventory Updated', `${sku} quantity increased by ${quantity}`);
+                    saveData();
+                    renderInventory();
+                    renderWarehouses();
+                    renderDashboard();
+                    closeModal('addItemModal');
+                }
+                return;
+            }
+
+            // Check capacity
+            const warehouse = warehouses.find(w => w.id === warehouseId);
+            if (warehouse.currentStock + quantity > warehouse.capacity) {
+                alert(`Cannot add items. Warehouse capacity exceeded. Available space: ${warehouse.capacity - warehouse.currentStock} units`);
+                return;
+            }
+
+            const newItem = {
+                id: Date.now(),
+                sku,
+                name,
+                warehouseId,
+                location,
+                quantity,
+                description
+            };
+
+            inventory.push(newItem);
+            updateWarehouseStock(warehouseId, quantity);
+            addActivity('Item Added', `${name} (${sku}) added to inventory`);
+            saveData();
+            renderInventory();
+            renderWarehouses();
+            renderDashboard();
+            closeModal('addItemModal');
+        }
+
+        function editItem(id) {
+            const item = inventory.find(i => i.id === id);
+            if (!item) return;
+
+            document.getElementById('editItemId').value = item.id;
+            document.getElementById('editItemSku').value = item.sku;
+            document.getElementById('editItemName').value = item.name;
+            document.getElementById('editItemLocation').value = item.location;
+            document.getElementById('editItemQuantity').value = item.quantity;
+            document.getElementById('editItemDescription').value = item.description || '';
+            
+            updateWarehouseSelects();
+            document.getElementById('editItemWarehouse').value = item.warehouseId;
+            openModal('editItemModal');
+        }
+
+        function saveItemEdit() {
+            const id = parseInt(document.getElementById('editItemId').value);
+            const item = inventory.find(i => i.id === id);
+            if (!item) return;
+
+            const oldQuantity = item.quantity;
+            const oldWarehouseId = item.warehouseId;
+            
+            const newWarehouseId = parseInt(document.getElementById('editItemWarehouse').value);
+            const newQuantity = parseInt(document.getElementById('editItemQuantity').value);
+
+            // If warehouse changed
+            if (oldWarehouseId !== newWarehouseId) {
+                const newWarehouse = warehouses.find(w => w.id === newWarehouseId);
+                if (newWarehouse.currentStock + newQuantity > newWarehouse.capacity) {
+                    alert(`Cannot move items. Target warehouse capacity exceeded.`);
+                    return;
+                }
+                
+                updateWarehouseStock(oldWarehouseId, -oldQuantity);
+                updateWarehouseStock(newWarehouseId, newQuantity);
+            } else {
+                // Just quantity changed
+                const diff = newQuantity - oldQuantity;
+                const warehouse = warehouses.find(w => w.id === oldWarehouseId);
+                if (warehouse.currentStock + diff > warehouse.capacity) {
+                    alert(`Cannot increase quantity. Warehouse capacity exceeded.`);
+                    return;
+                }
+                updateWarehouseStock(oldWarehouseId, diff);
+            }
+
+            item.sku = document.getElementById('editItemSku').value.trim();
+            item.name = document.getElementById('editItemName').value.trim();
+            item.warehouseId = newWarehouseId;
+            item.location = document.getElementById('editItemLocation').value.trim();
+            item.quantity = newQuantity;
+            item.description = document.getElementById('editItemDescription').value.trim();
+
+            addActivity('Item Updated', `${item.name} (${item.sku}) modified`);
+            saveData();
+            renderInventory();
+            renderWarehouses();
+            renderDashboard();
+            closeModal('editItemModal');
+        }
+
+        function deleteItem(id) {
+            const item = inventory.find(i => i.id === id);
+            if (!item) return;
+
+            document.getElementById('confirmText').textContent = `Are you sure you want to delete "${item.name}" (${item.sku})?`;
+            document.getElementById('confirmActionBtn').onclick = () => {
+                updateWarehouseStock(item.warehouseId, -item.quantity);
+                inventory = inventory.filter(i => i.id !== id);
+                addActivity('Item Deleted', `${item.name} (${item.sku}) removed`);
+                saveData();
+                renderInventory();
+                renderWarehouses();
+                renderDashboard();
+                closeModal('confirmModal');
+            };
+            openModal('confirmModal');
+        }
+
+        function renderInventory() {
+            const tbody = document.getElementById('inventoryTable');
+            
+            if (inventory.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="7" style="text-align: center; padding: 40px;">No inventory items yet. Add your first item to get started!</td></tr>';
+                return;
+            }
+
+            tbody.innerHTML = inventory.map(item => {
+                const warehouse = warehouses.find(w => w.id === item.warehouseId);
+                return `
+                    <tr>
+                        <td><strong>${item.sku}</strong></td>
+                        <td>${item.name}</td>
+                        <td>${warehouse ? warehouse.name : 'Unknown'}</td>
+                        <td>${item.location}</td>
+                        <td>${item.quantity.toLocaleString()}</td>
+                        <td>${item.description || '-'}</td>
+                        <td>
+                            <div class="action-buttons">
+                                <button class="icon-btn" onclick="editItem(${item.id})" title="Edit">✏️</button>
+                                <button class="icon-btn danger" onclick="deleteItem(${item.id})" title="Delete">🗑️</button>
+                            </div>
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+        }
+
+        function filterInventory() {
+            const search = document.getElementById('inventorySearch').value.toLowerCase();
+            const warehouseFilter = parseInt(document.getElementById('warehouseFilter').value) || null;
+            
+            const rows = document.querySelectorAll('#inventoryTable tr');
+            rows.forEach(row => {
+                const text = row.textContent.toLowerCase();
+                const itemId = row.querySelector('.icon-btn')?.getAttribute('onclick')?.match(/\d+/)?.[0];
+                const item = inventory.find(i => i.id === parseInt(itemId));
+                
+                const matchesSearch = text.includes(search);
+                const matchesWarehouse = !warehouseFilter || (item && item.warehouseId === warehouseFilter);
+                
+                row.style.display = (matchesSearch && matchesWarehouse) ? '' : 'none';
+            });
+        }
+
+        // Transfer functions
+        function openTransferModal() {
+            if (inventory.length === 0) {
+                alert('No items available to transfer');
+                return;
+            }
+            
+            const selectEl = document.getElementById('transferItem');
+            selectEl.innerHTML = '<option value="">Select an item...</option>' + 
+                inventory.map(item => {
+                    const warehouse = warehouses.find(w => w.id === item.warehouseId);
+                    return `<option value="${item.id}">${item.name} (${item.sku}) - ${warehouse.name}</option>`;
+                }).join('');
+            
+            openModal('transferModal');
+        }
+
+        function updateTransferWarehouses() {
+            const itemId = parseInt(document.getElementById('transferItem').value);
+            if (!itemId) return;
+
+            const item = inventory.find(i => i.id === itemId);
+            const sourceWarehouse = warehouses.find(w => w.id === item.warehouseId);
+            
+            document.getElementById('transferFrom').value = sourceWarehouse.name;
+            document.getElementById('transferMaxQty').textContent = `Max: ${item.quantity} units`;
+            
+            const toSelect = document.getElementById('transferTo');
+            toSelect.innerHTML = '<option value="">Select destination...</option>' + 
+                warehouses
+                    .filter(w => w.id !== item.warehouseId)
+                    .map(w => `<option value="${w.id}">${w.name}</option>`)
+                    .join('');
+        }
+
+        function executeTransfer() {
+            const itemId = parseInt(document.getElementById('transferItem').value);
+            const toWarehouseId = parseInt(document.getElementById('transferTo').value);
+            const quantity = parseInt(document.getElementById('transferQuantity').value);
+
+            if (!itemId || !toWarehouseId || !quantity) {
+                alert('Please fill all fields');
+                return;
+            }
+
+            const item = inventory.find(i => i.id === itemId);
+            if (quantity > item.quantity) {
+                alert(`Cannot transfer more than available quantity (${item.quantity})`);
+                return;
+            }
+
+            const toWarehouse = warehouses.find(w => w.id === toWarehouseId);
+            if (toWarehouse.currentStock + quantity > toWarehouse.capacity) {
+                alert(`Cannot transfer. Destination warehouse capacity exceeded. Available space: ${toWarehouse.capacity - toWarehouse.currentStock} units`);
+                return;
+            }
+
+            // Check if item already exists in destination
+            const existingItem = inventory.find(i => 
+                i.sku === item.sku && i.warehouseId === toWarehouseId
+            );
+
+            if (existingItem) {
+                existingItem.quantity += quantity;
+            } else {
+                inventory.push({
+                    id: Date.now(),
+                    sku: item.sku,
+                    name: item.name,
+                    warehouseId: toWarehouseId,
+                    location: item.location,
+                    quantity: quantity,
+                    description: item.description
+                });
+            }
+
+            item.quantity -= quantity;
+            if (item.quantity === 0) {
+                inventory = inventory.filter(i => i.id !== item.id);
+            }
+
+            updateWarehouseStock(item.warehouseId, -quantity);
+            updateWarehouseStock(toWarehouseId, quantity);
+
+            const fromWarehouse = warehouses.find(w => w.id === item.warehouseId);
+            transfers.push({
+                id: Date.now(),
+                date: new Date().toISOString(),
+                itemName: item.name,
+                from: fromWarehouse.name,
+                to: toWarehouse.name,
+                quantity
+            });
+
+            addActivity('Transfer Completed', `${quantity} units of ${item.name} from ${fromWarehouse.name} to ${toWarehouse.name}`);
+            saveData();
+            renderInventory();
+            renderWarehouses();
+            renderTransfers();
+            renderDashboard();
+            closeModal('transferModal');
+        }
+
+        function renderTransfers() {
+            const tbody = document.getElementById('transferHistory');
+            
+            if (transfers.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="6" style="text-align: center; padding: 40px;">No transfers yet</td></tr>';
+                return;
+            }
+
+            tbody.innerHTML = transfers.slice().reverse().map(transfer => `
+                <tr>
+                    <td>${new Date(transfer.date).toLocaleDateString()}</td>
+                    <td>${transfer.itemName}</td>
+                    <td>${transfer.from}</td>
+                    <td>${transfer.to}</td>
+                    <td>${transfer.quantity}</td>
+                    <td><span class="badge badge-success">Completed</span></td>
+                </tr>
+            `).join('');
+        }
+
+        // Helper functions
+        function updateWarehouseStock(warehouseId, quantity) {
+            const warehouse = warehouses.find(w => w.id === warehouseId);
+            if (warehouse) {
+                warehouse.currentStock += quantity;
+            }
+        }
+
+        function updateWarehouseSelects() {
+            const selects = ['itemWarehouse', 'editItemWarehouse'];
+            selects.forEach(selectId => {
+                const select = document.getElementById(selectId);
+                if (select) {
+                    select.innerHTML = '<option value="">Select warehouse...</option>' +
+                        warehouses.map(w => `<option value="${w.id}">${w.name} - ${w.location}</option>`).join('');
+                }
+            });
+
+            const filterSelect = document.getElementById('warehouseFilter');
+            if (filterSelect) {
+                filterSelect.innerHTML = '<option value="">All Warehouses</option>' +
+                    warehouses.map(w => `<option value="${w.id}">${w.name}</option>`).join('');
+            }
+        }
+    </script>
+</body>
+</html>

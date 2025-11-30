@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Warehouse Inventory Management</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <div class="container">
+        <header>
+            <h1>🏢 Warehouse Inventory Management</h1>
+            <p>Comprehensive inventory control across all locations</p>
+
+            <nav class="nav-tabs">
+                <button class="nav-tab active" data-tab="dashboard">Dashboard</button>
+                <button class="nav-tab" data-tab="warehouses">Warehouses</button>
+                <button class="nav-tab" data-tab="inventory">Inventory</button>
+                <button class="nav-tab" data-tab="transfers">Transfers</button>
+            </nav>
+        </header>
+
+        <!-- Dashboard Tab -->
+        <div id="dashboard" class="tab-content active">
+            <div class="dashboard-grid">
+                <div class="stat-card">
+                    <h3>Total Warehouses</h3>
+                    <div class="stat-value" id="totalWarehouses">0</div>
+                    <div class="stat-label">Active locations</div>
+                </div>
+                <div class="stat-card">
+                    <h3>Total Inventory</h3>
+                    <div class="stat-value" id="totalItems">0</div>
+                    <div class="stat-label">Items in stock</div>
+                </div>
+                <div class="stat-card">
+                    <h3>Average Capacity</h3>
+                    <div class="stat-value" id="avgCapacity">0%</div>
+                    <div class="stat-label">Across all warehouses</div>
+                </div>
+                <div class="stat-card">
+                    <h3>Alerts</h3>
+                    <div class="stat-value" id="totalAlerts">0</div>
+                    <div class="stat-label">Requires attention</div>
+                </div>
+            </div>
+
+            <div id="alertsContainer"></div>
+
+            <div class="section">
+                <div class="section-header">
+                    <h2 class="section-title">Recent Activity</h2>
+                </div>
+                <div id="activityLog"></div>
+            </div>
+        </div>
+
+        <!-- Warehouses Tab -->
+        <div id="warehouses" class="tab-content">
+            <div class="section">
+                <div class="section-header">
+                    <h2 class="section-title">Manage Warehouses</h2>
+                    <button class="btn btn-primary" id="addWarehouseBtn">
+                        ➕ Add Warehouse
+                    </button>
+                </div>
+
+                <div class="search-filter">
+                    <input type="text" class="search-box" id="warehouseSearch" placeholder="🔍 Search warehouses...">
+                </div>
+
+                <div class="warehouse-grid" id="warehouseGrid"></div>
+            </div>
+        </div>
+
+        <!-- Inventory Tab -->
+        <div id="inventory" class="tab-content">
+            <div class="section">
+                <div class="section-header">
+                    <h2 class="section-title">Manage Inventory</h2>
+                    <button class="btn btn-primary" id="addItemBtn">
+                        ➕ Add Item
+                    </button>
+                </div>
+
+                <div class="search-filter">
+                    <input type="text" class="search-box" id="inventorySearch" placeholder="🔍 Search items...">
+                    <select class="filter-select" id="warehouseFilter">
+                        <option value="">All Warehouses</option>
+                    </select>
+                </div>
+
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>SKU</th>
+                                <th>Item Name</th>
+                                <th>Warehouse</th>
+                                <th>Location</th>
+                                <th>Quantity</th>
+                                <th>Description</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="inventoryTable"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Transfers Tab -->
+        <div id="transfers" class="tab-content">
+            <div class="section">
+                <div class="section-header">
+                    <h2 class="section-title">Transfer Inventory</h2>
+                    <button class="btn btn-primary" id="newTransferBtn">
+                        🔄 New Transfer
+                    </button>
+                </div>
+
+                <div class="table-container">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Date</th>
+                                <th>Item</th>
+                                <th>From</th>
+                                <th>To</th>
+                                <th>Quantity</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody id="transferHistory"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add Warehouse Modal -->
+    <div id="addWarehouseModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">Add New Warehouse</h3>
+                <button class="modal-close" data-modal="addWarehouseModal">×</button>
+            </div>
+            <div class="modal-body">
+                <form id="addWarehouseForm">
+                    <div class="form-group">
+                        <label class="form-label">Warehouse Name *</label>
+                        <input type="text" class="form-input" id="warehouseName" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Location *</label>
+                        <input type="text" class="form-input" id="warehouseLocation" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Maximum Capacity *</label>
+                        <input type="number" class="form-input" id="warehouseCapacity" min="1" required>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" data-modal="addWarehouseModal" data-action="cancel">Cancel</button>
+                <button class="btn btn-primary" id="confirmAddWarehouse">Add Warehouse</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Edit Warehouse Modal -->
+    <div id="editWarehouseModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">Edit Warehouse</h3>
+                <button class="modal-close" data-modal="editWarehouseModal">×</button>
+            </div>
+            <div class="modal-body">
+                <form id="editWarehouseForm">
+                    <input type="hidden" id="editWarehouseId">
+                    <div class="form-group">
+                        <label class="form-label">Warehouse Name *</label>
+                        <input type="text" class="form-input" id="editWarehouseName" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Location *</label>
+                        <input type="text" class="form-input" id="editWarehouseLocation" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Maximum Capacity *</label>
+                        <input type="number" class="form-input" id="editWarehouseCapacity" min="1" required>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" data-modal="editWarehouseModal" data-action="cancel">Cancel</button>
+                <button class="btn btn-primary" id="confirmEditWarehouse">Save Changes</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add Item Modal -->
+    <div id="addItemModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">Add Inventory Item</h3>
+                <button class="modal-close" data-modal="addItemModal">×</button>
+            </div>
+            <div class="modal-body">
+                <form id="addItemForm">
+                    <div class="form-group">
+                        <label class="form-label">SKU *</label>
+                        <input type="text" class="form-input" id="itemSku" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Item Name *</label>
+                        <input type="text" class="form-input" id="itemName" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Warehouse *</label>
+                        <select class="form-input" id="itemWarehouse" required></select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Storage Location *</label>
+                        <input type="text" class="form-input" id="itemLocation" placeholder="e.g., Aisle 3, Shelf B"
+                            required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Quantity *</label>
+                        <input type="number" class="form-input" id="itemQuantity" min="1" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Description</label>
+                        <textarea class="form-input" id="itemDescription"></textarea>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" data-modal="addItemModal" data-action="cancel">Cancel</button>
+                <button class="btn btn-primary" id="confirmAddItem">Add Item</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Edit Item Modal -->
+    <div id="editItemModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">Edit Inventory Item</h3>
+                <button class="modal-close" data-modal="editItemModal">×</button>
+            </div>
+            <div class="modal-body">
+                <form id="editItemForm">
+                    <input type="hidden" id="editItemId">
+                    <div class="form-group">
+                        <label class="form-label">SKU *</label>
+                        <input type="text" class="form-input" id="editItemSku" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Item Name *</label>
+                        <input type="text" class="form-input" id="editItemName" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Warehouse *</label>
+                        <select class="form-input" id="editItemWarehouse" required></select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Storage Location *</label>
+                        <input type="text" class="form-input" id="editItemLocation" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Quantity *</label>
+                        <input type="number" class="form-input" id="editItemQuantity" min="1" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Description</label>
+                        <textarea class="form-input" id="editItemDescription"></textarea>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" data-modal="editItemModal" data-action="cancel">Cancel</button>
+                <button class="btn btn-primary" id="confirmEditItem">Save Changes</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Transfer Modal -->
+    <div id="transferModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">Transfer Inventory</h3>
+                <button class="modal-close" data-modal="transferModal">×</button>
+            </div>
+            <div class="modal-body">
+                <form id="transferForm">
+                    <div class="form-group">
+                        <label class="form-label">Select Item *</label>
+                        <select class="form-input" id="transferItem" required></select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">From Warehouse *</label>
+                        <input type="text" class="form-input" id="transferFrom" readonly>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">To Warehouse *</label>
+                        <select class="form-input" id="transferTo" required></select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Quantity *</label>
+                        <input type="number" class="form-input" id="transferQuantity" min="1" required>
+                        <small id="transferMaxQty" style="color: #6b7280; font-size: 12px;"></small>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" data-modal="transferModal" data-action="cancel">Cancel</button>
+                <button class="btn btn-success" id="confirmTransfer">Transfer</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Confirmation Modal -->
+    <div id="confirmModal" class="modal confirmation-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">Confirm Action</h3>
+                <button class="modal-close" data-modal="confirmModal">×</button>
+            </div>
+            <div class="confirmation-body">
+                <div class="confirmation-icon">⚠️</div>
+                <div class="confirmation-text" id="confirmText"></div>
+                <div class="confirmation-subtext">This action cannot be undone.</div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" data-modal="confirmModal" data-action="cancel">Cancel</button>
+                <button class="btn btn-danger" id="confirmActionBtn">Delete</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- JavaScript Files -->
+    <script src="js/data.js"></script>
+    <script src="js/warehouse.js"></script>
+    <script src="js/inventory.js"></script>
+    <script src="js/transfer.js"></script>
+    <script src="js/dashboard.js"></script>
+    <script src="js/app.js"></script>
+</body>
+
+</html>
