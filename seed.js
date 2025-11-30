@@ -4,9 +4,9 @@ require("dotenv").config(); // Load environment variables
 const mongoose = require("mongoose");
 
 // Import models
-const Warehouse = require("./models/warehouses.model");
+const Warehouse = require("./models/warehouse.model");
 const Inventory = require("./models/inventory.model");
-const Transfer = require("./models/transfers.model");
+const Transfer = require("./models/transfer.model");
 const Activity = require("./models/activity.model");
 
 // Sample data
