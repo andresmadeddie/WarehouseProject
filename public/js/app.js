@@ -4,6 +4,7 @@
 document.addEventListener('DOMContentLoaded', async () => {
     try {
         await loadData();        // Load data from backend (async)
+        updateWarehouseSelects(); // Populate dropdowns after data loads
         setupEventListeners();   // Attach event handlers to interactive elements
         renderDashboard();       // Display dashboard statistics and alerts
         renderWarehouses();      // Populate warehouse grid with current data

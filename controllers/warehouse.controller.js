@@ -3,7 +3,7 @@ const Warehouse = require("../models/warehouse.model"); // Import Warehouses mod
 // GET ALL warehouses
 const getWarehouses = async (req, res) => {
     try {
-        const warehouses = await Warehouse.find({}); // Fetch all warehouses
+        const warehouses = await Warehouse.find({}).lean(); // Fetch all warehouses
         res.status(200).json(warehouses); // Send warehouses as JSON
     } catch (error) {
         res.status(500).json({ message: error.message }); // Handle server error

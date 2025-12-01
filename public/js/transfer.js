@@ -3,7 +3,7 @@
 // Open modal to create new transfer
 function openTransferModal() {
     if (inventory.length === 0) {
-        alert('No items available to transfer');
+        showNotification('No items available to transfer', 'info');
         return;
     }
     
@@ -63,7 +63,7 @@ async function executeTransfer() {
     const quantity = parseInt(document.getElementById('transferQuantity').value);
     
     if (!itemId || !toWarehouseId || !quantity) {
-        alert('Please fill all fields');
+        showNotification('Please fill all fields', 'warning');
         return;
     }
     
@@ -74,12 +74,12 @@ async function executeTransfer() {
     });
     
     if (!item) {
-        alert('Item not found');
+        showNotification('Item not found', 'info');
         return;
     }
     
     if (quantity > item.quantity) {
-        alert(`Cannot transfer more than available quantity (${item.quantity})`);
+        showNotification(`Cannot transfer more than available quantity (${item.quantity})`, 'warning');
         return;
     }
     
@@ -90,12 +90,12 @@ async function executeTransfer() {
     });
     
     if (!toWarehouse) {
-        alert('Destination warehouse not found');
+        showNotification('Destination warehouse not found', 'error');
         return;
     }
     
     if (toWarehouse.currentStock + quantity > toWarehouse.capacity) {
-        alert(`Cannot transfer. Destination warehouse capacity exceeded. Available space: ${toWarehouse.capacity - toWarehouse.currentStock} units`);
+        showNotification(`Cannot transfer. Destination warehouse capacity exceeded. Available space: ${toWarehouse.capacity - toWarehouse.currentStock} units`, 'warning');
         return;
     }
     
@@ -200,9 +200,11 @@ async function executeTransfer() {
         renderDashboard();
         closeModal('transferModal');
         
+        showNotification('transfer successful!', 'success');
+
     } catch (error) {
         console.error('Error executing transfer:', error);
-        alert('Failed to execute transfer');
+        showNotification('Failed to execute transfer', 'error');
     }
 }
 
