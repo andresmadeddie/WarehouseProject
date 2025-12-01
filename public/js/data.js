@@ -41,7 +41,7 @@ async function loadData() {
 
     } catch (error) {
         console.error('Error loading data:', error);
-        alert('Failed to load data from server. Make sure the backend is running.');
+        showNotification('Failed to load data from server. Make sure the backend is running.', error);
     }
 }
 
@@ -140,4 +140,55 @@ function closeModal(modalId) {
         const form = modal.querySelector('form');
         if (form) form.reset();
     }
+}
+
+// Custom notification function to replace alert()
+function showNotification(message, type = 'info') {
+    const notification = document.getElementById('customNotification');
+    const icon = document.getElementById('notificationIcon');
+    const messageEl = document.getElementById('notificationMessage');
+    
+    // Set icon based on type
+    const icons = {
+        success: '✅',
+        error: '❌',
+        warning: '⚠️',
+        info: 'ℹ️'
+    };
+    
+    icon.textContent = icons[type] || icons.info;
+    messageEl.textContent = message;
+    
+    // Remove previous type classes
+    notification.classList.remove('success', 'error', 'warning', 'info');
+    // Add new type class
+    notification.classList.add(type, 'show');
+    
+    // Auto hide after 3 seconds
+    setTimeout(() => {
+        notification.style.animation = 'slideOut 0.3s ease';
+        setTimeout(() => {
+            notification.classList.remove('show');
+            notification.style.animation = '';
+        }, 300);
+    }, 3000);
+}
+
+// Optional(in dev): Create a confirm dialog replacement
+function showConfirm(message, onConfirm, onCancel) {
+    const confirmText = document.getElementById('confirmText');
+    confirmText.textContent = message;
+    
+    const confirmBtn = document.getElementById('confirmActionBtn');
+    
+    // Remove old event listeners by cloning
+    const newConfirmBtn = confirmBtn.cloneNode(true);
+    confirmBtn.parentNode.replaceChild(newConfirmBtn, confirmBtn);
+    
+    newConfirmBtn.onclick = () => {
+        if (onConfirm) onConfirm();
+        closeModal('confirmModal');
+    };
+    
+    openModal('confirmModal');
 }

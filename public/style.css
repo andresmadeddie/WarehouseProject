@@ -542,3 +542,77 @@ tr:hover {
         min-width: 100%;
     }
 }
+
+/* Custom Notification Styles */
+.custom-notification {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    background: white;
+    padding: 16px 24px;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    display: none;
+    z-index: 10000;
+    min-width: 300px;
+    max-width: 500px;
+    animation: slideIn 0.3s ease;
+}
+
+.custom-notification.show {
+    display: block;
+}
+
+.custom-notification.success {
+    border-left: 4px solid #10b981;
+}
+
+.custom-notification.error {
+    border-left: 4px solid #ef4444;
+}
+
+.custom-notification.warning {
+    border-left: 4px solid #f59e0b;
+}
+
+.custom-notification.info {
+    border-left: 4px solid #3b82f6;
+}
+
+.notification-content {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.notification-icon {
+    font-size: 24px;
+}
+
+.notification-message {
+    flex: 1;
+    font-size: 14px;
+    color: #374151;
+}
+
+@keyframes slideIn {
+    from {
+        transform: translateX(400px);
+        opacity: 0;
+    }
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+@keyframes slideOut {
+    from {
+        transform: translateX(0);
+        opacity: 1;
+    }
+    to {
+        transform: translateX(400px);
+        opacity: 0;
+    }
+}

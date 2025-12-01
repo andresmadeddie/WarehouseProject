@@ -14,7 +14,7 @@ async function addWarehouse() {
 
     // Validate required fields
     if (!name || !location || !capacity) {
-        alert('Please fill all required fields');
+        showNotification('Please fill all required fields', 'warning');
         return;
     }
 
@@ -47,9 +47,11 @@ async function addWarehouse() {
         closeModal('addWarehouseModal');
         updateWarehouseSelects();
 
+        showNotification('Warehouse added successfully!', 'success');
+
     } catch (error) {
         console.error('Error adding warehouse:', error);
-        alert('Failed to add warehouse');
+        showNotification('Failed to add warehouse', 'error');
     }
 }
 
@@ -84,7 +86,7 @@ async function saveWarehouseEdit() {
     if (!warehouse) return;
 
     if (capacity < warehouse.currentStock) {
-        alert(`Cannot reduce capacity below current stock (${warehouse.currentStock})`);
+        showNotification(`Cannot reduce capacity below current stock (${warehouse.currentStock})`, 'warning');
         return;
     }
 
@@ -106,9 +108,11 @@ async function saveWarehouseEdit() {
         closeModal('editWarehouseModal');
         updateWarehouseSelects();
 
+        showNotification('Warehouse updated successfully!', 'success');
+
     } catch (error) {
         console.error('Error updating warehouse:', error);
-        alert('Failed to update warehouse');
+        showNotification('Failed to update warehouse', 'error');
     }
 }
 
@@ -124,7 +128,7 @@ function deleteWarehouse(id) {
     // Check if warehouse has inventory
     const hasInventory = inventory.some(item => item.warehouseId.toString() === id.toString());
     if (hasInventory) {
-        alert('Cannot delete warehouse with existing inventory. Please transfer or remove all items first.');
+        showNotification('Cannot delete warehouse with existing inventory. Please transfer or remove all items first.', 'warning');
         return;
     }
 
@@ -147,9 +151,11 @@ function deleteWarehouse(id) {
             closeModal('confirmModal');
             updateWarehouseSelects();
 
+            showNotification('Warehouse deleted successfully!', 'success');
+
         } catch (error) {
             console.error('Error deleting warehouse:', error);
-            alert('Failed to delete warehouse');
+            showNotification('Failed to delete warehouse', 'error');
         }
     };
     openModal('confirmModal');

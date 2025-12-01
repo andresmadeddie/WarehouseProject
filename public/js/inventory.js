@@ -3,7 +3,7 @@
 // Open modal to add new inventory item
 function openAddItemModal() {
     if (warehouses.length === 0) {
-        alert('Please add a warehouse first');
+        showNotification('Please add a warehouse first', 'warning');
         return;
     }
     updateWarehouseSelects();
@@ -22,7 +22,7 @@ async function addItem() {
 
     // Validate required fields
     if (!sku || !name || !warehouseId || !location || !quantity) {
-        alert('Please fill all required fields');
+        showNotification('Please fill all required fields', 'warning');
         return;
     }
 
@@ -54,9 +54,11 @@ async function addItem() {
                 renderDashboard();
                 closeModal('addItemModal');
 
+                showNotification('Item quantity updated successfully!', 'success');
+
             } catch (error) {
                 console.error('Error updating item:', error);
-                alert('Failed to update item quantity');
+                showNotification('Failed to update item quantity', 'error');
             }
         }
         return;
@@ -65,7 +67,7 @@ async function addItem() {
     // Check warehouse capacity
     const warehouse = warehouses.find(w => w._id === warehouseId || w.id === warehouseId);
     if (warehouse.currentStock + quantity > warehouse.capacity) {
-        alert(`Cannot add items. Warehouse capacity exceeded. Available space: ${warehouse.capacity - warehouse.currentStock} units`);
+        showNotification(`Cannot add items. Warehouse capacity exceeded. Available space: ${warehouse.capacity - warehouse.currentStock} units`, 'warning');
         return;
     }
 
@@ -107,9 +109,11 @@ async function addItem() {
         renderDashboard();
         closeModal('addItemModal');
 
+        showNotification('Item added to inventory successfully!', 'success');
+
     } catch (error) {
         console.error('Error adding item:', error);
-        alert('Failed to add item to inventory');
+        showNotification('Failed to add item to inventory', 'error');
     }
 }
 
@@ -155,7 +159,7 @@ async function saveItemEdit() {
 
         // Check destination warehouse capacity
         if (newWarehouse.currentStock + newQuantity > newWarehouse.capacity) {
-            alert(`Cannot move items. Target warehouse capacity exceeded.`);
+            showNotification(`Cannot move items. Target warehouse capacity exceeded.`, 'warning');
             return;
         }
 
@@ -168,7 +172,7 @@ async function saveItemEdit() {
         const warehouse = warehouses.find(w => w._id === oldWarehouseId || w.id === oldWarehouseId);
 
         if (warehouse.currentStock + diff > warehouse.capacity) {
-            alert(`Cannot increase quantity. Warehouse capacity exceeded.`);
+            showNotification(`Cannot increase quantity. Warehouse capacity exceeded. Available space: ${warehouse.capacity - warehouse.currentStock} units`, 'warning');          
             return;
         }
 
@@ -182,6 +186,8 @@ async function saveItemEdit() {
     item.location = document.getElementById('editItemLocation').value.trim();
     item.quantity = newQuantity;
     item.description = document.getElementById('editItemDescription').value.trim();
+
+    showNotification('Item updated successfully!', 'success');
 
     try {
         // Update item in backend
@@ -203,7 +209,7 @@ async function saveItemEdit() {
 
     } catch (error) {
         console.error('Error updating item:', error);
-        alert('Failed to update item');
+        showNotification('Failed to update item', 'error');
     }
 }
 
@@ -248,9 +254,11 @@ function deleteItem(id) {
             renderDashboard();
             closeModal('confirmModal');
 
+            showNotification('Item deleted successfully!', 'success');
+
         } catch (error) {
             console.error('Error deleting item:', error);
-            alert('Failed to delete item');
+            showNotification('Failed to delete item', 'error');
             closeModal('confirmModal');
         }
     };
