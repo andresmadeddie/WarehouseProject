@@ -1,6 +1,6 @@
-// Data Management - Backend Version
+// Data Management
 
-// Base API URL - adjust to match your server
+// Base API URL - adjust to match server
 const API_URL = 'http://localhost:3000/api';
 
 // Data storage - populated from backend
@@ -27,6 +27,7 @@ async function loadData() {
             throw new Error('Failed to fetch data from server');
         }
 
+        // Parses JSON into JS objects
         warehouses = await warehousesRes.json();
         inventory = await inventoryRes.json();
         transfers = await transfersRes.json();
