@@ -13,7 +13,7 @@ let activityLog = [];
 async function loadData() {
     try {
         console.log('Loading data from backend...');
-        
+
         // Fetch all data from backend
         const [warehousesRes, inventoryRes, transfersRes, activityRes] = await Promise.all([
             fetch(`${API_URL}/warehouses`),
@@ -80,10 +80,10 @@ async function updateWarehouseStock(warehouseId, quantity) {
         const wId = w._id || w.id;
         return wId.toString() === warehouseId.toString();
     });
-    
+
     if (warehouse) {
         warehouse.currentStock += quantity;
-        
+
         try {
             const warehouseIdStr = warehouse._id || warehouse.id;
             const response = await fetch(`${API_URL}/warehouses/${warehouseIdStr}`, {
@@ -148,7 +148,7 @@ function showNotification(message, type = 'info') {
     const notification = document.getElementById('customNotification');
     const icon = document.getElementById('notificationIcon');
     const messageEl = document.getElementById('notificationMessage');
-    
+
     // Set icon based on type
     const icons = {
         success: '✅',
@@ -156,15 +156,15 @@ function showNotification(message, type = 'info') {
         warning: '⚠️',
         info: 'ℹ️'
     };
-    
+
     icon.textContent = icons[type] || icons.info;
     messageEl.textContent = message;
-    
+
     // Remove previous type classes
     notification.classList.remove('success', 'error', 'warning', 'info');
     // Add new type class
     notification.classList.add(type, 'show');
-    
+
     // Auto hide after 3 seconds
     setTimeout(() => {
         notification.style.animation = 'slideOut 0.3s ease';
@@ -179,17 +179,17 @@ function showNotification(message, type = 'info') {
 function showConfirm(message, onConfirm, onCancel) {
     const confirmText = document.getElementById('confirmText');
     confirmText.textContent = message;
-    
+
     const confirmBtn = document.getElementById('confirmActionBtn');
-    
+
     // Remove old event listeners by cloning
     const newConfirmBtn = confirmBtn.cloneNode(true);
     confirmBtn.parentNode.replaceChild(newConfirmBtn, confirmBtn);
-    
+
     newConfirmBtn.onclick = () => {
         if (onConfirm) onConfirm();
         closeModal('confirmModal');
     };
-    
+
     openModal('confirmModal');
 }

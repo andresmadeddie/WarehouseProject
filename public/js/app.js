@@ -36,7 +36,7 @@ function setupEventListeners() {
     const warehouseSearch = document.getElementById('warehouseSearch');
     const inventorySearch = document.getElementById('inventorySearch');
     const warehouseFilter = document.getElementById('warehouseFilter');
-    
+
     if (warehouseSearch && typeof filterWarehouses === 'function') {
         warehouseSearch.addEventListener('input', filterWarehouses);
     }
@@ -51,7 +51,7 @@ function setupEventListeners() {
     const addWarehouseBtn = document.getElementById('addWarehouseBtn');
     const confirmAddWarehouse = document.getElementById('confirmAddWarehouse');
     const confirmEditWarehouse = document.getElementById('confirmEditWarehouse');
-    
+
     if (addWarehouseBtn && typeof openAddWarehouseModal === 'function') {
         addWarehouseBtn.addEventListener('click', openAddWarehouseModal);
     }
@@ -66,7 +66,7 @@ function setupEventListeners() {
     const addItemBtn = document.getElementById('addItemBtn');
     const confirmAddItem = document.getElementById('confirmAddItem');
     const confirmEditItem = document.getElementById('confirmEditItem');
-    
+
     if (addItemBtn && typeof openAddItemModal === 'function') {
         addItemBtn.addEventListener('click', openAddItemModal);
     }
@@ -81,7 +81,7 @@ function setupEventListeners() {
     const newTransferBtn = document.getElementById('newTransferBtn');
     const confirmTransfer = document.getElementById('confirmTransfer');
     const transferItem = document.getElementById('transferItem');
-    
+
     if (newTransferBtn && typeof openTransferModal === 'function') {
         newTransferBtn.addEventListener('click', openTransferModal);
     }

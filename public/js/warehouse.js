@@ -40,7 +40,7 @@ async function addWarehouse() {
 
         const savedWarehouse = await response.json();
         warehouses.push(savedWarehouse);
-        
+
         await addActivity('Warehouse Added', `${name} in ${location}`);
         renderWarehouses();
         renderDashboard();
@@ -61,7 +61,7 @@ function editWarehouse(id) {
         const wId = w._id || w.id;
         return wId.toString() === id.toString();
     });
-    
+
     if (!warehouse) return;
 
     document.getElementById('editWarehouseId').value = warehouse._id || warehouse.id;
@@ -82,7 +82,7 @@ async function saveWarehouseEdit() {
         const wId = w._id || w.id;
         return wId.toString() === id.toString();
     });
-    
+
     if (!warehouse) return;
 
     if (capacity < warehouse.currentStock) {
@@ -122,7 +122,7 @@ function deleteWarehouse(id) {
         const wId = w._id || w.id;
         return wId.toString() === id.toString();
     });
-    
+
     if (!warehouse) return;
 
     // Check if warehouse has inventory
@@ -144,7 +144,7 @@ function deleteWarehouse(id) {
                 const wId = w._id || w.id;
                 return wId.toString() !== id.toString();
             });
-            
+
             await addActivity('Warehouse Deleted', `${warehouse.name} removed`);
             renderWarehouses();
             renderDashboard();
@@ -164,12 +164,12 @@ function deleteWarehouse(id) {
 // Render warehouse cards
 function renderWarehouses() {
     const grid = document.getElementById('warehouseGrid');
-    
+
     if (!grid) {
         console.error('Warehouse grid not found');
         return;
     }
-    
+
     if (warehouses.length === 0) {
         grid.innerHTML = '<div class="empty-state"><div class="empty-state-icon">🏢</div><p>No warehouses yet. Add your first warehouse to get started!</p></div>';
         return;
@@ -211,7 +211,7 @@ function renderWarehouses() {
 function filterWarehouses() {
     const search = document.getElementById('warehouseSearch').value.toLowerCase();
     const cards = document.querySelectorAll('.warehouse-card');
-    
+
     cards.forEach(card => {
         const text = card.textContent.toLowerCase();
         card.style.display = text.includes(search) ? 'block' : 'none';

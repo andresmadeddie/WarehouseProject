@@ -551,7 +551,7 @@ tr:hover {
     background: white;
     padding: 16px 24px;
     border-radius: 8px;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
     display: none;
     z-index: 10000;
     min-width: 300px;
@@ -600,6 +600,7 @@ tr:hover {
         transform: translateX(400px);
         opacity: 0;
     }
+
     to {
         transform: translateX(0);
         opacity: 1;
@@ -611,6 +612,7 @@ tr:hover {
         transform: translateX(0);
         opacity: 1;
     }
+
     to {
         transform: translateX(400px);
         opacity: 0;

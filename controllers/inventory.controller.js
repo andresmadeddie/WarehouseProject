@@ -29,7 +29,7 @@ const createInventory = async (req, res) => {
         if (req.body.warehouseId && typeof req.body.warehouseId === 'string') {
             req.body.warehouseId = new mongoose.Types.ObjectId(req.body.warehouseId);
         }
-        
+
         const inventory = await Inventory.create(req.body); // Create inventory from request body
         res.status(200).json(inventory); // Send created inventory as JSON
     } catch (error) {

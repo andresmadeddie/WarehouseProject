@@ -172,7 +172,7 @@ async function saveItemEdit() {
         const warehouse = warehouses.find(w => w._id === oldWarehouseId || w.id === oldWarehouseId);
 
         if (warehouse.currentStock + diff > warehouse.capacity) {
-            showNotification(`Cannot increase quantity. Warehouse capacity exceeded. Available space: ${warehouse.capacity - warehouse.currentStock} units`, 'warning');          
+            showNotification(`Cannot increase quantity. Warehouse capacity exceeded. Available space: ${warehouse.capacity - warehouse.currentStock} units`, 'warning');
             return;
         }
 

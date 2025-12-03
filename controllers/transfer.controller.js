@@ -24,7 +24,7 @@ const getTransfer = async (req, res) => {
 
 // CREATE a new transfer
 const createTransfer = async (req, res) => {
-    try {            
+    try {
         // Convert ObjectId fields
         if (req.body.itemId && typeof req.body.itemId === 'string') {
             req.body.itemId = new mongoose.Types.ObjectId(req.body.itemId);
