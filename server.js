@@ -38,8 +38,7 @@ app.get(/.*/, (req, res) => res.sendFile(path.join(__dirname, 'public/index.html
 mongoose
     .connect(process.env.MONGO_URI ?? "mongodb://localhost:27017/myDB") // Connect to MongoDB
     .then(() => {
-        console.log("Connected to MongoDB");
-        // const PORT = process.env.PORT ?? 3000;
+        console.log("Connected to MongoDB");        
         app.listen(process.env.PORT ?? 3000, () => { // Start HTTP server
             console.log(`Server running on port ${process.env.PORT ?? 3000}`);
         });
